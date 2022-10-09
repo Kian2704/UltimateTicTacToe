@@ -1,0 +1,15 @@
+﻿  main.cpp
+C:\Users\kian2\source\repos\SFMLTutorial\SFMLTutorial\main.cpp(303,27): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+C:\Users\kian2\source\repos\SFMLTutorial\SFMLTutorial\main.cpp(356,23): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+C:\Users\kian2\source\repos\SFMLTutorial\SFMLTutorial\main.cpp(363,82): warning C4244: "Argument": Konvertierung von "T" in "float", möglicher Datenverlust
+          with
+          [
+              T=int
+          ]
+C:\Users\kian2\source\repos\SFMLTutorial\SFMLTutorial\main.cpp(363,59): warning C4244: "Argument": Konvertierung von "T" in "float", möglicher Datenverlust
+          with
+          [
+              T=int
+          ]
+C:\Users\kian2\source\repos\SFMLTutorial\SFMLTutorial\main.cpp(410,39): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+  SFMLTutorial.vcxproj -> C:\Users\kian2\source\repos\SFMLTutorial\Debug\SFMLTutorial.exe
