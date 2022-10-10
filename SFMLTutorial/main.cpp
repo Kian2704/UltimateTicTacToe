@@ -38,6 +38,7 @@ private:
 public:
     int whatsnextfield = 0;
 private:
+    //Calculating current row or column
     int Row(sf::RenderWindow* window)
     {
         int MouseY = getMouseY(window);
@@ -148,7 +149,7 @@ private:
         else
             return -1;
     }
-    int checkError(sf::RenderWindow* window)
+    int checkError(sf::RenderWindow* window)//If clicked outside of play area
     {
         int nextField = whatsnextField(window);
         if ((row == -1) || (column == -1) || (field == -1) || (nextField == -1))
@@ -167,7 +168,7 @@ private:
     }
 
 public:
-    int whatsnextField(sf::RenderWindow* window)
+    int whatsnextField(sf::RenderWindow* window)//Gets the field the next player has to play in 
     {
         std::cout << Row(window);
         std::cout << Column(window) << '\n';
@@ -210,7 +211,7 @@ public:
         else
             return nextField;
     }
-    int currentField(sf::RenderWindow* window)
+    int currentField(sf::RenderWindow* window)//Calculates field on which mouse cursor is clicking
     {
         int tempRow = Row(window);
         int tempColumn = Column(window);
@@ -256,7 +257,7 @@ public:
     {
         return sf::Mouse::getPosition(*window).y;
     }
-    sf::Vector2i charPosition(sf::Vector2i position)
+    sf::Vector2i charPosition(sf::Vector2i position)//Calculates middle position of clicked field
     { 
             int lRow = Row(position);
             int lColumn = Column(position);
@@ -301,7 +302,6 @@ public:
         if (std::find(filledFields.begin(), filledFields.end(), checkNumber) == filledFields.end())
         {
             filledFields.push_back(fieldNumber(window));
-            std::cout << "AHAHAHAH";
             return 0;
         }
         else
@@ -311,12 +311,12 @@ public:
     }
     void insertFields(sf::RenderWindow* window,int curPlayer)
     {
-        int globalField = currentField(window);
-        int localField = whatsnextField(window);
+        int outerField = currentField(window);
+        int innerField = whatsnextField(window);
 
-        fields[globalField][localField] = curPlayer;
+        fields[outerField][innerField] = curPlayer;
 
-        std::cout << globalField << "|" << localField << ">>" << fields[globalField][localField];
+        std::cout << outerField << "|" << innerField << ">>" << fields[outerField][innerField];
     }
     int rightField(sf::RenderWindow* window)
     {
@@ -344,13 +344,13 @@ public:
         return 0;
         
     }
-    void checkWin(sf::RenderWindow* window, int curPlayer)
+    void checkWin(sf::RenderWindow* window, int curPlayer)//Sets the win state if player wins outer field
     {
+        
         int globalField = currentField(window);
 
         if (globalField != -1)
         {
-
             if ((fields[globalField][1] == curPlayer && fields[globalField][2] == curPlayer && fields[globalField][3] == curPlayer) ||
                 (fields[globalField][4] == curPlayer && fields[globalField][5] == curPlayer && fields[globalField][6] == curPlayer) ||
                 (fields[globalField][7] == curPlayer && fields[globalField][8] == curPlayer && fields[globalField][9] == curPlayer) ||
@@ -367,11 +367,11 @@ public:
                        std::cout << i << " " << y << " " << fields[i][y] << '\n';
                     }
                 }
-                fields[globalField][0] = curPlayer;
+                fields[globalField][0] = curPlayer;//Assigns field to winning player
             }
         }
     }
-    int isDone(sf::RenderWindow* window)
+    int isDone(sf::RenderWindow* window)//checks if outer field is already done
     {
         int field = currentField(window);
         if (fields[field][0] != 0)
@@ -414,7 +414,7 @@ int main()
     init();
     calc cal;
     sf::RenderWindow window(sf::VideoMode(design.gameField.getSize().x, design.gameField.getSize().y), "Ultimate Tic Tac Toe By Kian Devbuild", sf::Style::Titlebar | sf::Style::Close );
-    std::vector<characters> charVector;
+    std::vector<characters> charVector;//Vector that contains all filled squares
     while (window.isOpen())
     {
         sf::Event event;
@@ -428,14 +428,15 @@ int main()
             {
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    sf::Vector2i mouseCoords = { cal.getMouseX(&window), cal.getMouseY(&window) };
-                    if (!cal.isDone(&window) && cal.rightField(&window)&& !cal.isFilled(&window))
+                    sf::Vector2i mouseCoords = { cal.getMouseX(&window), cal.getMouseY(&window) }; // Get current position of mouse cursor
+                    if (!cal.isDone(&window) && cal.rightField(&window)&& !cal.isFilled(&window)) // Check if player plays in the correct field
                     {
-                    sf::Vector2i charPos = cal.charPosition(mouseCoords);
-                    charVector.push_back({{charPos}, curPlayer});
-                   cal.insertFields(&window, curPlayer);
-                   cal.checkWin(&window, curPlayer);
+                    sf::Vector2i charPos = cal.charPosition(mouseCoords); //Calculates position of Characters(X or O)
+                    charVector.push_back({{charPos}, curPlayer});//Adds character to a Vector with all the squares that are already filled
+                   cal.insertFields(&window, curPlayer);//Inserts the playerId(0 or 1) into an array at place[currentOuterField][currentInnerField]
+                   cal.checkWin(&window, curPlayer);//Checks if whole outer field is done
 
+                   //Switch players after move
                     if (curPlayer == 1)
                         curPlayer = 2;
                     else
@@ -444,24 +445,10 @@ int main()
                     
                 }
             }
-            if (event.type == sf::Event::KeyPressed)
-            {
-                if ((event.key.code == sf::Keyboard::Multiply) && (Bdebug == true))
-                {
-                    Debug.printMousePosition(window);
-                    std::cout << "Vector Size: " << charVector.size() << '\n';
-
-                    for (int i = 0; i < charVector.size(); i++)
-                    {
-                        std::cout <<  "Item " << i << ": " << charVector[i].position.x << ' ' << charVector[i].position.y << ' ';
-                    }
-                }
-            }
         }
+        //Things to display graphics
         window.draw(design.gameFieldSprite);
         drawCharacters(&charVector,  &window);
-
-
         window.display();
         window.clear();
         Sleep(1);
